@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/css/materialize.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/huebee@1/dist/huebee.min.css">
+    <style>
+      body {
+        display: flex;
+        min-height: 100vh;
+        flex-direction: column;
+      }
+      main {
+        flex: 1 0 auto;
+      }
+      .progress {
+        visibility: hidden;
+      }
+      .chips .input {
+        width: 100% !important;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div id="index-banner" class="container header">
+      <div class="section no-pad-bot">
+        <div class="container">
+          <h5 class="header center teal-text text-lighten-2">autocue<span class="red-text text-accent-2">rr</span></h5>
+        </div>
+        <div class="row center">
+          <a id="create" href="javascript:void(0)" class="btn waves-effect waves-light teal lighten-1">Create Slide</a>
+        </div>
+        <div class="progress">
+          <div class="indeterminate"></div>
+        </div>
+      </div>
+    </div>
+
+    <main>
+      <div class="container main-section">
+        <div class="section">
+          <form action="#">
+            
+            <div class="row">
+              <div class="col s12 m6">
+                <div class="icon-block">
+                  <input id="text-color" class="color-input-text" value="" placeholder="Select Text Color"/>
+                </div>
+              </div>
+  
+              <div class="col s12 m6">
+                <div class="icon-block">
+                  <input id="backgroung-color" class="color-input-background" value="" placeholder="Select Background Color"/>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col s12 m12">
+                <div class="icon-block">
+                  <label>Font Size: <span id="font-size-label">45</span></label>
+                  <p class="range-field">
+                    <input type="range" id="font-size" min="30" max="60" />
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col s6">
+                <div class="icon-block">
+                  <label>Italic</label>
+                  <!-- Switch -->
+                  <div class="switch">
+                    <label>
+                      Off
+                      <input id="italic" type="checkbox">
+                      <span class="lever"></span>
+                      On
+                    </label>
+                  </div>
+                  <!-- End of switch -->
+                </div>
+              </div>
+              <div class="col s6">
+                <div class="icon-block">
+                  <label>Bold</label>
+                  <!-- Switch -->
+                  <div class="switch">
+                    <label>
+                      Off
+                      <input id="bold" type="checkbox">
+                      <span class="lever"></span>
+                      On
+                    </label>
+                  </div>
+                  <!-- End of switch -->
+                </div>
+              </div>
+            </div>
+            <br>
+            <div class="row center">
+              <div class="col s12">
+                <!-- Dropdown Trigger -->
+                <a class='dropdown-button btn' href='#' data-activates='position-dropdown'>Text position</a>
+              
+                <!-- Dropdown Structure -->
+                <ul id='position-dropdown' class='dropdown-content'>
+                  <li><a id="top" onclick="setPosition(this.id)" href="javascript:void(0)">Top</a></li>
+                  <li><a id="middle" onclick="setPosition(this.id)" href="javascript:void(0)">Middle</a></li>
+                  <li><a id="bottom" onclick="setPosition(this.id)" href="javascript:void(0)">Bottom</a></li>
+                </ul><br>
+                <label>Position: <span class="position">middle</span></label>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col s12">
+                <div class="icon-block">
+                  <p>
+                    <input type="checkbox" id="sendMe" />
+                    <label for="sendMe">Send me a copy</label>
+                  </p>
+                </div>
+              </div>
+              
+              <div class="col s12">
+                <div class="icon-block">
+                  <div class="row">
+                    <div class="col s12">
+                      <br><label>Press Enter key to add email after inserting.</label>
+                    </div>
+                    <div class="input-field col s12">
+                      <div class="chips-autocomplete"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+  
+          </form>
+        </div>
+      </div>
+    </main>
+    
+    <!-- Modal Structure -->
+    <div id="modal-error" class="modal">
+      <div class="modal-content">
+        <h5>Oops...</h5>
+        <p id="error-msg"></p>
+      </div>
+      <div class="modal-footer">
+        <a href="javascript:void(0);" class="modal-action modal-close waves-effect waves-green btn-flat">Got it</a>
+      </div>
+    </div>
+
+    <footer class="page-footer teal lighten-1">
+      <div class="container">
+        <div class="row">
+          <div class="col l6 s12">
+            <p class="grey-text text-lighten-4">Use this tool to automatically generate autocue in Google Slides.</p>
+          </div>
+        </div>
+      </div>
+      <div class="footer-copyright">
+        <div class="container">
+          &copy; 2017&nbsp;<a class="grey-text text-lighten-4" href="javascript:void(0)">autocue<span class="red-text text-accent-1">rr</span></a>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/js/materialize.min.js"></script>
+    <script src="https://unpkg.com/huebee@1/dist/huebee.pkgd.min.js"></script>
+    <script>
+      
+      $(function() {
+        
+        $('#create').click(createSlide);
+        $('.modal').modal();
+        $('.chips-autocomplete').on('chip.add', function(e, chip){
+          $('.chip').each(function(i, obj) {
+            if (!validateEmail($(this).getText())) {
+              $(this).css("background-color", "#f15858");
+              $(this).css("color", "#ffffff");
+            }
+          });
+        });
+        
+        $('.chips-autocomplete').material_chip({
+          placeholder: '+ Email',
+          secondaryPlaceholder: 'Entering emails to share'
+        });
+        
+        
+        google.script.run
+          .withSuccessHandler(updateAutoComplete)
+          .withFailureHandler(
+            function(msg, element) {
+              showError("Server error: "+msg, $("#modal-error"));
+              element.disabled = false;
+            })
+          .withUserObject(this)
+          .getContactsEmails();
+        
+      });
+      
+      $("#font-size").on("input", function() {
+        $("#font-size-label").html($("#font-size").val());
+      });
+
+      
+      $('.color-input-text').each(function(i, elem) {
+        var hueb = new Huebee(elem, {
+          notation: 'hex'
+        });
+      });
+
+      $('.color-input-background').each(function(i, elem) {
+        var hueb = new Huebee(elem, {
+          notation: 'hex'
+        });
+      });
+      
+      jQuery.fn.getText = function() {
+        return $(this).clone()
+                      .children()
+                      .remove()
+                      .end()
+                      .text();
+      }
+      
+      function validateEmail(email) {
+        var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        return regex.test(email);
+      }
+      
+      function updateAutoComplete(vals) {
+        var d = {};
+        
+        $('.chips-autocomplete').material_chip({
+          autocompleteOptions: {
+          data: d,
+          limit: Infinity,
+          minLength: 1
+          }
+        });
+        
+        for (var i=0; i<vals.length; i++) {
+          d[vals[i]] = null;
+        }
+        
+        $('.chips-autocomplete').material_chip({
+          autocompleteOptions: {
+          data: d,
+          limit: Infinity,
+          minLength: 1,
+          placeholder: '+ Email',
+          secondaryPlaceholder: 'Entering emails to share'
+          }
+        });
+      }
+
+      function createSlide() {
+        var textColor = $('.color-input-text').val();
+        var bgColor = $('.color-input-background').val();
+        var fontSize = $('#font-size').val();
+        var italic = $("#italic").is(":checked");
+        var bold = $("#bold").is(":checked");
+        var sendMe = $("#sendMe").is(":checked");
+        var progressBar = $(".progress");
+        var sharedEmails = $('.chips').material_chip('data');
+        var emails = [];
+        var err = [];
+        
+        if (sharedEmails.length) {
+          
+          for (var i=0; i<sharedEmails.length; i++) {
+            if (validateEmail(sharedEmails[i].tag)) {
+              emails.push(sharedEmails[i].tag);
+            } else {
+              err.push(sharedEmails[i].tag);
+            }
+          }
+          
+        }
+        
+        if(!textColor || !bgColor) {
+          var msg = "It seems like you haven't specified text and background colors yet. Please choose the colors so that I can work for you.<br><br>:)";
+          showError(msg, $("#modal-error"));
+        } else if (err.length) {
+          showError("Invalid email entry found, please check again.", $("#modal-error"));
+        } else {
+          this.disabled = true;
+          progressBar.css("visibility", "visible");
+          google.script.run
+            .withSuccessHandler(
+              function(returnId, element) {
+                progressBar.css("visibility", "hidden");
+                Materialize.toast("<a href='https://docs.google.com/presentation/d/"+returnId+"' target='_blank'>Open Slide</a>", 9000);
+                element.disabled = false;
+              })
+            .withFailureHandler(
+              function(msg, element) {
+                progressBar.css("visibility", "hidden");
+                showError(msg, $("#modal-error"));
+                element.disabled = false;
+              })
+            .withUserObject(this)
+            .main(textColor, bgColor, fontSize, italic, bold, sendMe, emails);
+        }
+      }
+      
+      function setPosition(position) {
+        this.disabled = true;
+        google.script.run
+            .withSuccessHandler(
+              function(returnedVal, element) {
+                Materialize.toast("Position set: "+returnedVal, 3000);
+                $(".position").html(returnedVal);
+                element.disabled = false;
+              })
+            .withFailureHandler(
+              function(msg, element) {
+                showError("Server error: "+msg, $("#modal-error"));
+                element.disabled = false;
+              })
+            .withUserObject(this)
+            .setPosition(position);
+      }
+
+      function showError(msg, element) {
+        $("#error-msg").html(msg);
+        element.modal('open');
+      }
+    </script>
+    
+  </body>
+</html>
