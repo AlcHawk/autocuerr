@@ -239,15 +239,6 @@
       
       function updateAutoComplete(vals) {
         var d = {};
-        
-        $('.chips-autocomplete').material_chip({
-          autocompleteOptions: {
-          data: d,
-          limit: Infinity,
-          minLength: 1
-          }
-        });
-        
         for (var i=0; i<vals.length; i++) {
           d[vals[i]] = null;
         }
