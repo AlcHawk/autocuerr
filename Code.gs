@@ -366,8 +366,10 @@ function main(
     if (text[i] != '\n') {
       line = line.concat(text.charAt(i));
     } else {
-      lines.push(line);
-      line = "";
+      if (line.length) {
+        lines.push(line);
+        line = "";
+      }
     }
   }
   // Adding the last line into the array
